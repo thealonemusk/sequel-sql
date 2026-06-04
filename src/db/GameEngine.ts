@@ -52,6 +52,21 @@ class GameEngine {
             return [];
         }
     }
+
+    reset() {
+        if (!this.db) return;
+        try {
+            this.db.run(`
+                DROP TABLE IF EXISTS access_logs;
+                DROP TABLE IF EXISTS transactions;
+                DROP TABLE IF EXISTS employees;
+            `);
+            this.db.run(initialSchema);
+            this.db.run(seedData);
+        } catch (error) {
+            console.error("Failed to reset database", error);
+        }
+    }
 }
 
 export const gameEngine = new GameEngine();
