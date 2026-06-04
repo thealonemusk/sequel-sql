@@ -57,6 +57,10 @@ class GameEngine {
         if (!this.db) return;
         try {
             this.db.run(`
+                DROP TABLE IF EXISTS blacklisted_ips;
+                DROP TABLE IF EXISTS transfer_logs;
+                DROP TABLE IF EXISTS offshore_accounts;
+                DROP TABLE IF EXISTS departments;
                 DROP TABLE IF EXISTS access_logs;
                 DROP TABLE IF EXISTS transactions;
                 DROP TABLE IF EXISTS employees;
