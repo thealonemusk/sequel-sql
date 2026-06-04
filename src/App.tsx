@@ -184,13 +184,13 @@ function App() {
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100vw', background: 'var(--bg-color)', boxSizing: 'border-box' }}>
             {/* Top Horizontal Dashboard */}
             <header style={{
-                background: 'var(--surface-color)',
-                borderBottom: '1px solid var(--surface-border-strong)',
-                padding: '1rem 2rem',
+                background: 'linear-gradient(135deg, #090d16 0%, #111827 100%)',
+                borderBottom: '1px solid rgba(99, 102, 241, 0.25)',
+                padding: '0.85rem 2rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                boxShadow: 'var(--shadow-soft)',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
                 zIndex: 80,
                 position: 'sticky',
                 top: 0,
@@ -198,23 +198,23 @@ function App() {
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <div style={{
-                        background: 'var(--primary-light)',
-                        color: 'var(--primary-color)',
+                        background: 'rgba(99, 102, 241, 0.15)',
+                        color: '#818cf8',
                         width: '38px',
                         height: '38px',
                         borderRadius: '12px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: '0 4px 10px rgba(99, 102, 241, 0.15)'
+                        border: '1px solid rgba(99, 102, 241, 0.25)'
                     }}>
                         <Briefcase size={20} style={{ strokeWidth: 2.5 }} />
                     </div>
                     <div>
-                        <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', color: 'var(--text-primary)', lineHeight: '1.2' }}>
+                        <h1 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', color: '#ffffff', lineHeight: '1.2' }}>
                             SQL Detective
                         </h1>
-                        <p style={{ margin: 0, fontSize: '0.725rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        <p style={{ margin: 0, fontSize: '0.675rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             OmniCorp Security Audit
                         </p>
                     </div>
@@ -223,14 +223,14 @@ function App() {
                 {/* Dashboard Stats & Controls */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                     {/* Progress Bar */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', width: '200px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', width: '220px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.725rem', fontWeight: 700, color: '#94a3b8' }}>
                             <span>Investigation Progress</span>
-                            <span>{Math.floor((currentLevelId / levels.length) * 100)}%</span>
+                            <span style={{ color: '#818cf8' }}>{Math.floor((currentLevelId / levels.length) * 100)}%</span>
                         </div>
-                        <div style={{ background: '#f1f5f9', height: '6px', borderRadius: '10px', overflow: 'hidden' }}>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.08)', height: '6px', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.03)' }}>
                             <div style={{ 
-                                background: 'linear-gradient(90deg, var(--primary-color), #818cf8)', 
+                                background: 'linear-gradient(90deg, #6366f1, #06b6d4)', 
                                 width: `${(currentLevelId / levels.length) * 100}%`, 
                                 height: '100%', 
                                 borderRadius: '10px',
@@ -239,13 +239,21 @@ function App() {
                         </div>
                     </div>
 
-                    <div className="level-badge" style={{ margin: 0 }}>
+                    <div className="level-badge" style={{ 
+                        margin: 0, 
+                        background: 'rgba(99, 102, 241, 0.12)', 
+                        border: '1px solid rgba(99, 102, 241, 0.35)', 
+                        color: '#a5b4fc',
+                        padding: '0.4rem 1.1rem',
+                        fontSize: '0.8rem'
+                    }}>
                         <span style={{ 
                             display: 'inline-block', 
                             width: '8px', 
                             height: '8px', 
-                            background: 'var(--primary-color)', 
-                            borderRadius: '50%' 
+                            background: '#818cf8', 
+                            borderRadius: '50%',
+                            boxShadow: '0 0 8px #818cf8'
                         }}></span>
                         Level {currentLevelId} / {levels.length}
                     </div>
@@ -254,16 +262,23 @@ function App() {
                         onClick={handleResetGame}
                         className="btn"
                         style={{
-                            background: '#f1f5f9',
-                            color: 'var(--text-primary)',
-                            padding: '0.5rem 1rem',
+                            background: 'rgba(255, 255, 255, 0.06)',
+                            color: '#e2e8f0',
+                            padding: '0.45rem 1rem',
                             fontSize: '0.8rem',
                             borderRadius: '10px',
                             boxShadow: 'none',
-                            border: '1px solid var(--surface-border-strong)'
+                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                            transition: 'all 0.2s ease'
                         }}
-                        onMouseOver={e => e.currentTarget.style.background = '#e2e8f0'}
-                        onMouseOut={e => e.currentTarget.style.background = '#f1f5f9'}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
+                            e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)';
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                        }}
                     >
                         Reset Case
                     </button>

@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --bg-color: #f8fafc; /* soft, clean off-white background */
+  --bg-color: #f5f7fb; /* soft, clean off-white background with a hint of blue */
   --surface-color: #ffffff; /* pure white cards */
   --surface-border: #f1f5f9; /* extremely subtle borders */
   --surface-border-strong: #e2e8f0;
@@ -9,6 +9,10 @@
   --primary-color: #6366f1; /* ChronoTask Indigo accent */
   --primary-hover: #4f46e5;
   --primary-light: #e0e7ff;
+
+  --accent-color: #06b6d4; /* electric cyan/teal */
+  --accent-hover: #0891b2;
+  --accent-light: #ecfeff;
   
   --dark-btn-color: #0f172a; /* ChronoTask Solid Black/Charcoal button */
   --dark-btn-hover: #1e293b;
@@ -44,8 +48,8 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   min-height: 100vh;
-  /* Soft, clean dots background texture matching ChronoTask */
-  background-image: radial-gradient(var(--surface-border-strong) 1.2px, transparent 1.2px);
+  /* Soft, clean dots background texture matching ChronoTask but with a slight blue/purple tint */
+  background-image: radial-gradient(rgba(99, 102, 241, 0.12) 1.5px, transparent 1.5px);
   background-size: 32px 32px;
   background-position: 0 0;
   -webkit-font-smoothing: antialiased;
