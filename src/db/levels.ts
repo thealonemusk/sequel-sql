@@ -9,6 +9,10 @@ export interface Level {
     story: string;
     task: string;
     validator: (results: QueryResult[], query: string) => { success: boolean; message: string };
+    sampleOutput?: {
+        columns: string[];
+        values: any[][];
+    };
 }
 
 export const levels: Level[] = [
@@ -16,7 +20,13 @@ export const levels: Level[] = [
         id: 1,
         title: "Level 1: The First Day",
         story: "Welcome to OmniCorp, Data Analyst. It's your first day on the job, but things are already chaotic. Rumor has it that a large sum of money has gone missing. Before we panic, let's just get familiar with our team.",
-        task: "Write a query to retrieve all records from the 'employees' table.",
+        task: "Retrieve all columns and records from the 'employees' table.",
+        sampleOutput: {
+            columns: ["id", "name", "department", "role", "manager_id", "salary", "hire_date"],
+            values: [
+                [1, "John Doe", "Engineering", "Software Engineer", 4, 75000, "2023-01-15"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -32,7 +42,13 @@ export const levels: Level[] = [
         id: 2,
         title: "Level 2: Midnight Oil",
         story: "Security noticed some unusual activity in the system logs. Someone was logged into the internal servers very late at night. We need to find out who it was.",
-        task: "Query the 'access_logs' table to find logins that occurred after 22:00:00 (10:00 PM). Hint: Use WHERE login_time > '2023-10-01 22:00:00'",
+        task: "Find all logins in the 'access_logs' table that occurred after 10:00 PM (22:00:00) on October 1st, 2023.",
+        sampleOutput: {
+            columns: ["id", "employee_id", "login_time", "ip_address", "status"],
+            values: [
+                [101, 3, "2023-10-01 22:15:30", "192.168.1.15", "Success"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -50,7 +66,13 @@ export const levels: Level[] = [
         id: 3,
         title: "Level 3: Follow the Money",
         story: "Those late-night logins coincide with some massive outgoing transactions. Let's see which department is burning through cash.",
-        task: "Use GROUP BY on the 'transactions' table (joined with employees, or just by employee_id for now) to find the total sum of amount. Let's start simple: Get the total SUM(amount) from transactions.",
+        task: "Calculate the total sum of all amounts in the 'transactions' table.",
+        sampleOutput: {
+            columns: ["SUM(amount)"],
+            values: [
+                [125000.00]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const lowerQuery = query.toLowerCase();
@@ -68,7 +90,13 @@ export const levels: Level[] = [
         id: 4,
         title: "Level 4: Connecting the Dots",
         story: "We need names, not just IDs. Let's join the tables to see exactly who made these transactions.",
-        task: "Write a query that INNER JOINs 'employees' and 'transactions' ON employee_id, and SELECT the employee name and transaction amount.",
+        task: "Retrieve the names of employees and their transaction amounts by joining the 'employees' and 'transactions' tables.",
+        sampleOutput: {
+            columns: ["name", "amount"],
+            values: [
+                ["Alice Smith", 1200.00]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const lowerQuery = query.toLowerCase();
@@ -86,7 +114,13 @@ export const levels: Level[] = [
         id: 5,
         title: "Level 5: The Suspect",
         story: "Let's find the biggest spender. We want to find employees whose transactions were greater than 10,000.",
-        task: "Using the same JOIN, filter the results WHERE amount > 10000.",
+        task: "Retrieve the names of employees and their transaction amounts for transactions that were strictly greater than 10,000.",
+        sampleOutput: {
+            columns: ["name", "amount"],
+            values: [
+                ["Bob Jones", 15000.00]
+            ]
+        },
         validator: (results) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -100,7 +134,11 @@ export const levels: Level[] = [
         id: 6,
         title: "Level 6: Case Closed",
         story: "We have our suspect! Eve Davis from Finance has been wiring money to offshore LLCs in the middle of the night. Let's secure her account.",
-        task: "Write an UPDATE query to change the 'role' of 'Eve Davis' in the employees table to 'Suspended'. Note: there is no output for UPDATE, just success.",
+        task: "Suspend 'Eve Davis' by updating her role in the 'employees' table to 'Suspended'.",
+        sampleOutput: {
+            columns: [],
+            values: []
+        },
         validator: (_results, query) => {
             const lowerQuery = query.toLowerCase();
             if (lowerQuery.includes('update employees') && lowerQuery.includes("set role") && lowerQuery.includes("suspended")) {
@@ -113,7 +151,13 @@ export const levels: Level[] = [
         id: 7,
         title: "Level 7: Access Mapping",
         story: "Although Eve is suspended, we need to gather statistics on access logs to identify other potentially compromised machines. Let's inspect login frequencies by IP.",
-        task: "Write a query to count the number of logins from each 'ip_address' in the 'access_logs' table, grouped by 'ip_address'.",
+        task: "Count the number of logins from each IP address in the 'access_logs' table, grouped by IP address.",
+        sampleOutput: {
+            columns: ["ip_address", "COUNT(*)"],
+            values: [
+                ["192.168.1.1", 8]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -131,7 +175,13 @@ export const levels: Level[] = [
         id: 8,
         title: "Level 8: Expense Auditing",
         story: "Let's perform a department-wide expenditure check. We need to identify total expenses for each department, helping security locate where corporate funds are leaking.",
-        task: "Write a query that JOINs 'employees' and 'transactions', groups by 'department', and calculates the SUM of 'amount' for each department.",
+        task: "Calculate the total transaction amount for each department by combining the employee and transaction records.",
+        sampleOutput: {
+            columns: ["department", "SUM(amount)"],
+            values: [
+                ["Sales", 45000.00]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -150,7 +200,13 @@ export const levels: Level[] = [
         id: 9,
         title: "Level 9: Quiet Accounts",
         story: "Some employees might have been dormant. Let's find employees who have never made a single corporate transaction, as their credentials might have been stolen to bypass transaction limits.",
-        task: "Write a query using a LEFT JOIN to find the names of employees who have no transactions in the 'transactions' table (where transactions.employee_id IS NULL).",
+        task: "Find the names of employees who have never made any transactions.",
+        sampleOutput: {
+            columns: ["name"],
+            values: [
+                ["John Doe"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -171,7 +227,13 @@ export const levels: Level[] = [
         id: 10,
         title: "Level 10: Suspicious Subnet Access",
         story: "Security reports that all unauthorized server logins came from the local IP subnet '10.0.0.x'. Let's identify the names of all employees who have logged in from these IP addresses.",
-        task: "Write a query to select the DISTINCT names of employees who have logged in from an IP address starting with '10.0.0.%'. Join 'employees' and 'access_logs'.",
+        task: "Find the unique (distinct) names of employees who have logged in from an IP address in the '10.0.0.x' subnet.",
+        sampleOutput: {
+            columns: ["name"],
+            values: [
+                ["Alice Smith"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -192,7 +254,11 @@ export const levels: Level[] = [
         id: 11,
         title: "Level 11: Call in the Experts",
         story: "OmniCorp CEO Diana Prince has requested additional external help. We are onboarding a legendary cyber investigator, Sherlock Holmes, to audit our networks.",
-        task: "Write an INSERT query to add an employee named 'Sherlock Holmes' in the 'Security' department with the role 'Lead Investigator'.",
+        task: "Onboard our new lead investigator by inserting a record for 'Sherlock Holmes' in the 'Security' department with the role 'Lead Investigator' into the 'employees' table.",
+        sampleOutput: {
+            columns: [],
+            values: []
+        },
         validator: (_results, query) => {
             const lowerQuery = query.toLowerCase();
             if (lowerQuery.includes('insert into employees') && lowerQuery.includes('sherlock holmes') && lowerQuery.includes('security') && lowerQuery.includes('lead investigator')) {
@@ -205,7 +271,13 @@ export const levels: Level[] = [
         id: 12,
         title: "Level 12: Wire Transfers Audit",
         story: "Sherlock suspects the money was laundered using offshore shell companies. Let's isolate all transaction descriptions that mention 'Offshore' or 'LLC'.",
-        task: "Select all columns from the 'transactions' table where the description contains either 'Offshore' or 'LLC'. Hint: Use LIKE with OR.",
+        task: "Retrieve all transactions where the transaction description contains either 'Offshore' or 'LLC'.",
+        sampleOutput: {
+            columns: ["id", "employee_id", "amount", "description", "transaction_date"],
+            values: [
+                [5, 2, 25000.00, "Payment to Cayman Offshore LLC", "2023-10-04"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -223,7 +295,13 @@ export const levels: Level[] = [
         id: 13,
         title: "Level 13: Large Average Spenders",
         story: "Let's group transactions by employee, and compute their averages. We want to find employees whose average transaction amount is strictly greater than 1000.",
-        task: "Write a query to find the 'employee_id' and the average transaction 'amount' grouped by 'employee_id' where the average is greater than 1000. Hint: Use HAVING AVG(amount) > 1000.",
+        task: "Find the employee IDs whose average transaction amount is strictly greater than 1,000, along with their average transaction amount.",
+        sampleOutput: {
+            columns: ["employee_id", "AVG(amount)"],
+            values: [
+                [3, 1850.00]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -241,7 +319,13 @@ export const levels: Level[] = [
         id: 14,
         title: "Level 14: Finance Ledger Audit",
         story: "Let's audit all transactions associated with employees working in the 'Finance' department to check if anyone else was collaborating with Eve.",
-        task: "Write a query that JOINs 'employees' and 'transactions' to select the employee name, transaction description, amount, and transaction_date where the department is 'Finance'.",
+        task: "Audit all transactions for employees in the 'Finance' department. Select the employee's name, transaction description, amount, and transaction date.",
+        sampleOutput: {
+            columns: ["name", "description", "amount", "transaction_date"],
+            values: [
+                ["Charlie Brown", "Office Supplies", 150.00, "2023-10-02"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -259,7 +343,11 @@ export const levels: Level[] = [
         id: 15,
         title: "Level 15: Clean Evidence Logs",
         story: "Eve Davis's logs have been secured and duplicated for the legal trial. Security policies dictate we must now purge her internal access logs from the live database to clean up workspace nodes.",
-        task: "Write a query to DELETE all records from 'access_logs' where 'employee_id' is 5 (Eve's employee ID).",
+        task: "Purge the access logs for employee ID 5 from the live database by deleting their records from 'access_logs'.",
+        sampleOutput: {
+            columns: [],
+            values: []
+        },
         validator: (_results, query) => {
             const lowerQuery = query.toLowerCase();
             if (lowerQuery.includes('delete') && lowerQuery.includes('access_logs') && lowerQuery.includes('employee_id') && lowerQuery.includes('5')) {
@@ -272,7 +360,13 @@ export const levels: Level[] = [
         id: 16,
         title: "Level 16: High Earners Audit",
         story: "Corporate payroll wants to make sure all administrative high earners are accounted for during the heist audits.",
-        task: "Select all columns from the 'employees' table where the salary is strictly greater than 80000.",
+        task: "Retrieve all employee records from the 'employees' table where the salary is strictly greater than 80,000.",
+        sampleOutput: {
+            columns: ["id", "name", "department", "role", "manager_id", "salary", "hire_date"],
+            values: [
+                [4, "Jane Doe", "Executive", "Vice President", null, 95000, "2020-05-10"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -290,7 +384,13 @@ export const levels: Level[] = [
         id: 17,
         title: "Level 17: Date-Bound Auditing",
         story: "The major financial discrepancies occurred within a critical 3-day window in October.",
-        task: "Select all columns from 'transactions' where transaction_date is between '2023-10-04' and '2023-10-06' inclusive.",
+        task: "Retrieve all transactions that occurred between October 4th, 2023, and October 6th, 2023, inclusive.",
+        sampleOutput: {
+            columns: ["id", "employee_id", "amount", "description", "transaction_date"],
+            values: [
+                [12, 1, 5000.00, "Services Rendered", "2023-10-05"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -308,7 +408,13 @@ export const levels: Level[] = [
         id: 18,
         title: "Level 18: Ledger Size",
         story: "Let's count the total size of the transaction log. We need to verify if any rows were deleted.",
-        task: "Write a query to find the total COUNT(*) of rows in the 'transactions' table.",
+        task: "Count the total number of transaction records on the ledger.",
+        sampleOutput: {
+            columns: ["COUNT(*)"],
+            values: [
+                [15]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -326,7 +432,13 @@ export const levels: Level[] = [
         id: 19,
         title: "Level 19: Unique Roles",
         story: "To understand credentials and access hierarchies, let's list all unique roles within the firm.",
-        task: "Write a query to select all unique (distinct) roles from the 'employees' table.",
+        task: "Retrieve the list of unique roles held by employees in the company.",
+        sampleOutput: {
+            columns: ["role"],
+            values: [
+                ["Analyst"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -344,7 +456,13 @@ export const levels: Level[] = [
         id: 20,
         title: "Level 20: Top Spenders",
         story: "We need to find the three absolute largest transactions on the ledger to present to executive management.",
-        task: "Select all columns from transactions, ordered by amount in descending order, and limit the results to the top 3.",
+        task: "Find the three largest transactions on the ledger, ordered from highest amount to lowest.",
+        sampleOutput: {
+            columns: ["id", "employee_id", "amount", "description", "transaction_date"],
+            values: [
+                [8, 2, 75000.00, "Consulting Wire", "2023-10-04"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -362,7 +480,13 @@ export const levels: Level[] = [
         id: 21,
         title: "Level 21: Department Budget Check",
         story: "Let's cross reference our staff with the departments table to inspect department budgets.",
-        task: "Select the employee name and their department budget by joining 'employees' and 'departments' ON department = departments.name.",
+        task: "Retrieve each employee's name along with their department's budget.",
+        sampleOutput: {
+            columns: ["name", "budget"],
+            values: [
+                ["Alice Smith", 500000]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -370,7 +494,7 @@ export const levels: Level[] = [
             if (!lowerQuery.includes('join')) {
                 return { success: false, message: "You must perform a JOIN." };
             }
-            if (res.columns.includes('name') && res.values.length >= 6) {
+            if (res.columns.includes('name') && res.columns.includes('budget') && res.values.length >= 6) {
                 return { success: true, message: "Staff-to-budget mapping completed successfully!" };
             }
             return { success: false, message: "Make sure you SELECT name and budget from the joined tables." };
@@ -380,7 +504,13 @@ export const levels: Level[] = [
         id: 22,
         title: "Level 22: Building A Operations",
         story: "Security reports suggest the compromised servers were located in Building A. Let's look up departments housed there with substantial budgets.",
-        task: "Select all columns from 'departments' where budget is greater than 200000 and office_location starts with 'Building A'.",
+        task: "Identify departments housed in Building A that have budgets strictly greater than 200,000.",
+        sampleOutput: {
+            columns: ["id", "name", "budget", "office_location"],
+            values: [
+                [2, "Engineering", 600000, "Building A, Room 402"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -398,7 +528,13 @@ export const levels: Level[] = [
         id: 23,
         title: "Level 23: CEO Direct Reports",
         story: "The CEO, Diana Prince, needs a list of all her direct reports to audit their security clearance keys.",
-        task: "Select the name of all employees who report directly to Diana Prince (manager_id = 4).",
+        task: "Retrieve the names of all employees who report directly to the manager with ID 4.",
+        sampleOutput: {
+            columns: ["name"],
+            values: [
+                ["Bob Jones"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -416,7 +552,13 @@ export const levels: Level[] = [
         id: 24,
         title: "Level 24: Org Hierarchy Self-Join",
         story: "Let's list all employees along with their manager names. This will help us inspect reporting patterns.",
-        task: "Perform a LEFT JOIN of 'employees' (aliased as e) to 'employees' (aliased as m) ON e.manager_id = m.id, selecting e.name AS employee_name and m.name AS manager_name.",
+        task: "Map the organization's reporting lines by retrieving all employees and their manager's names. Alias the employee's name as 'employee_name' and the manager's name as 'manager_name'.",
+        sampleOutput: {
+            columns: ["employee_name", "manager_name"],
+            values: [
+                ["Alice Smith", "Diana Prince"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -434,7 +576,13 @@ export const levels: Level[] = [
         id: 25,
         title: "Level 25: Intruder Access Alerts",
         story: "Let's gather details about logins that failed. Stolen credentials will show failed attempts before success.",
-        task: "Write a query joining 'employees' and 'access_logs' to select name, role, login_time, and status where status = 'Failed'.",
+        task: "Retrieve security access alerts by listing the name, role, login time, and status for all failed login attempts.",
+        sampleOutput: {
+            columns: ["name", "role", "login_time", "status"],
+            values: [
+                ["John Doe", "Analyst", "2023-10-01 23:05:00", "Failed"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -452,7 +600,13 @@ export const levels: Level[] = [
         id: 26,
         title: "Level 26: Subnetwork Blacklist Trace",
         story: "Cross-reference log entries with our blacklisted IP subnet list to see which employee was targeted.",
-        task: "JOIN 'access_logs', 'blacklisted_ips', and 'employees' to select access_logs.ip_address, employees.name, and blacklisted_ips.reason.",
+        task: "Trace logins from blacklisted IPs. Select the login IP address, the target employee's name, and the reason they were blacklisted.",
+        sampleOutput: {
+            columns: ["ip_address", "name", "reason"],
+            values: [
+                ["10.0.0.45", "Eve Davis", "Known Hacker Subnet"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -470,7 +624,13 @@ export const levels: Level[] = [
         id: 27,
         title: "Level 27: Offshore Wire Auditing",
         story: "Let's query transfer details to map offshore money transfers to specific bank accounts.",
-        task: "Select transaction_id, description, amount, account_number, bank_name, and country by joining 'transfer_logs', 'transactions', and 'offshore_accounts'.",
+        task: "Audit the offshore transfer logs. Retrieve the transaction ID, description, amount, offshore account number, bank name, and country.",
+        sampleOutput: {
+            columns: ["transaction_id", "description", "amount", "account_number", "bank_name", "country"],
+            values: [
+                [14, "Wire transfer offshore", 25000, "CH-992-B", "Zurich Credit", "Switzerland"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -488,7 +648,13 @@ export const levels: Level[] = [
         id: 28,
         title: "Level 28: Offshore Capital Flow",
         story: "Let's summarize total capital sent to offshore accounts grouped by country to report to international investigators.",
-        task: "JOIN 'transfer_logs', 'transactions', and 'offshore_accounts', GROUP BY country, and select country and SUM(amount) AS total_amount.",
+        task: "Find the total amount of money sent to offshore accounts grouped by country. Alias the sum column as 'total_amount'.",
+        sampleOutput: {
+            columns: ["country", "total_amount"],
+            values: [
+                ["Switzerland", 50000]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -507,7 +673,13 @@ export const levels: Level[] = [
         id: 29,
         title: "Level 29: Profile Target Counts",
         story: "Let's rank employees by the frequency of failed logins to see who was the primary target.",
-        task: "JOIN 'employees' and 'access_logs', filter WHERE status = 'Failed', GROUP BY name, and select name and COUNT(*) AS failed_count.",
+        task: "Count the number of failed login attempts for each employee. Retrieve the employee's name and their failed login count aliased as 'failed_count'.",
+        sampleOutput: {
+            columns: ["name", "failed_count"],
+            values: [
+                ["Eve Davis", 2]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -525,7 +697,13 @@ export const levels: Level[] = [
         id: 30,
         title: "Level 30: Department Pay Benchmarks",
         story: "Let's check transaction sizes across departments to compare average expenditures.",
-        task: "JOIN 'employees' and 'transactions', GROUP BY department, and select department, MAX(amount) AS max_transaction, and AVG(amount) AS avg_transaction.",
+        task: "Analyze departmental transaction statistics. Select the department name, the maximum transaction amount (aliased as 'max_transaction'), and the average transaction amount (aliased as 'avg_transaction').",
+        sampleOutput: {
+            columns: ["department", "max_transaction", "avg_transaction"],
+            values: [
+                ["Finance", 50000.00, 15000.00]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -543,7 +721,13 @@ export const levels: Level[] = [
         id: 31,
         title: "Level 31: Above Average Salaries",
         story: "To detect administrative anomalies, let's find employees who earn more than the company average.",
-        task: "Select name and salary from employees where salary is greater than the average salary of all employees (use a subquery).",
+        task: "Find the name and salary of employees who earn more than the company's average salary.",
+        sampleOutput: {
+            columns: ["name", "salary"],
+            values: [
+                ["Diana Prince", 150000]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -561,7 +745,13 @@ export const levels: Level[] = [
         id: 32,
         title: "Level 32: Heavy Spenders Subquery",
         story: "Let's locate employees associated with transactions exceeding 40,000 using a subquery.",
-        task: "Select name from employees where id IN (select distinct employee_id from transactions where amount > 40000).",
+        task: "Identify the names of employees who have made any single transaction exceeding 40,000.",
+        sampleOutput: {
+            columns: ["name"],
+            values: [
+                ["Eve Davis"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -579,7 +769,13 @@ export const levels: Level[] = [
         id: 33,
         title: "Level 33: Spender Outliers",
         story: "Let's isolate employees who have never filed a transaction using a subquery.",
-        task: "Select name from employees where id NOT IN (select distinct employee_id from transactions).",
+        task: "Find the names of employees who have never made a transaction.",
+        sampleOutput: {
+            columns: ["name"],
+            values: [
+                ["Frank Castle"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -597,7 +793,13 @@ export const levels: Level[] = [
         id: 34,
         title: "Level 34: IP Address Checks",
         story: "Let's check if Alice Smith has logged in from the suspicious address '192.168.1.5' using EXISTS.",
-        task: "Select name from employees e where EXISTS (select 1 from access_logs a where a.employee_id = e.id and a.ip_address = '192.168.1.5').",
+        task: "Retrieve the names of employees who have logged in from the IP address '192.168.1.5'.",
+        sampleOutput: {
+            columns: ["name"],
+            values: [
+                ["Alice Smith"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -615,7 +817,13 @@ export const levels: Level[] = [
         id: 35,
         title: "Level 35: Department Spends CTE",
         story: "Let's construct a Common Table Expression to list departments whose transaction sums exceed 50,000.",
-        task: "Write a CTE named 'dept_spending' summing transaction amount grouped by department, then SELECT department, total_spent FROM dept_spending WHERE total_spent > 50000.",
+        task: "Group transactions and calculate total spending per department using a Common Table Expression (CTE) named 'dept_spending'. Select the department name and total spending (aliased as 'total_spent') for departments that spent more than 50,000.",
+        sampleOutput: {
+            columns: ["department", "total_spent"],
+            values: [
+                ["Finance", 104620]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -633,7 +841,13 @@ export const levels: Level[] = [
         id: 36,
         title: "Level 36: Direct Reports CTE",
         story: "Let's build a CTE to map employees to their managers, then query it for Diana's reports.",
-        task: "Write a CTE named 'employee_org' returning employee name (emp_name) and manager name (mgr_name), then SELECT emp_name FROM employee_org WHERE mgr_name = 'Diana Prince'.",
+        task: "Create a Common Table Expression (CTE) named 'employee_org' that maps employee names (aliased as 'emp_name') to their manager's name (aliased as 'mgr_name'). Query this CTE to list the employee names who report to 'Diana Prince'.",
+        sampleOutput: {
+            columns: ["emp_name"],
+            values: [
+                ["Alice Smith"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -651,7 +865,13 @@ export const levels: Level[] = [
         id: 37,
         title: "Level 37: Department Contact UNION",
         story: "Investigators want to merge list contacts for Security and Finance departments.",
-        task: "Select name from employees where department = 'Security' UNION select name from employees where department = 'Finance'.",
+        task: "Retrieve a consolidated list of names of all employees who belong to either the 'Security' department or the 'Finance' department (excluding duplicate names).",
+        sampleOutput: {
+            columns: ["name"],
+            values: [
+                ["Frank Castle"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -669,7 +889,13 @@ export const levels: Level[] = [
         id: 38,
         title: "Level 38: Active Spender INTERSECT",
         story: "Let's find employee IDs who have logged in and also have transaction records.",
-        task: "Select id from employees INTERSECT select distinct employee_id from transactions.",
+        task: "Find all employee IDs that exist in the employees directory and have also made transactions.",
+        sampleOutput: {
+            columns: ["id"],
+            values: [
+                [1]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -687,7 +913,13 @@ export const levels: Level[] = [
         id: 39,
         title: "Level 39: Idle Logins EXCEPT",
         story: "Let's find employee IDs who have entries but have never filed a transaction using EXCEPT.",
-        task: "Select id from employees EXCEPT select distinct employee_id from transactions.",
+        task: "Find the employee IDs that exist in the employees directory but have never made any transactions.",
+        sampleOutput: {
+            columns: ["id"],
+            values: [
+                [6]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -705,7 +937,13 @@ export const levels: Level[] = [
         id: 40,
         title: "Level 40: Fully Traced Wires",
         story: "Sherlock demands a full audit trail linking employees to offshore accounts.",
-        task: "JOIN employees, transactions, transfer_logs, and offshore_accounts to select name, amount, account_number, and country.",
+        task: "Trace the complete path of offshore wire transfers. Retrieve the employee's name, transaction amount, offshore account number, and country.",
+        sampleOutput: {
+            columns: ["name", "amount", "account_number", "country"],
+            values: [
+                ["Eve Davis", 50000, "CH-8920-Y", "Switzerland"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -723,7 +961,13 @@ export const levels: Level[] = [
         id: 41,
         title: "Level 41: Transaction Risk Case",
         story: "Let's classify transaction amounts into risk tiers using a CASE statement.",
-        task: "Select description, amount, and a CASE column named 'risk_level' (if amount > 10000 then 'Critical', if amount > 1000 then 'High', else 'Low').",
+        task: "Classify transactions based on risk. If the amount is over 10,000, label it 'Critical'; if it is over 1,000, label it 'High'; otherwise label it 'Low'. Select the transaction description, amount, and the classified category aliased as 'risk_level'.",
+        sampleOutput: {
+            columns: ["description", "amount", "risk_level"],
+            values: [
+                ["Consulting Fee - Offshore", 50000, "Critical"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -741,7 +985,13 @@ export const levels: Level[] = [
         id: 42,
         title: "Level 42: Salary Ranks",
         story: "To understand department hierarchies, let's rank employee salaries within each department.",
-        task: "Select name, department, salary, and ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS salary_rank from employees.",
+        task: "Rank employees by salary within each department (highest salary ranked first). Select the employee name, department, salary, and their department salary rank aliased as 'salary_rank'.",
+        sampleOutput: {
+            columns: ["name", "department", "salary", "salary_rank"],
+            values: [
+                ["Alice Smith", "Engineering", 85000, 1]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -759,7 +1009,13 @@ export const levels: Level[] = [
         id: 43,
         title: "Level 43: Cumulative Ledger Sum",
         story: "Let's calculate the cumulative transaction sum over time to track depletion values.",
-        task: "Select id, amount, SUM(amount) OVER (ORDER BY transaction_date) AS cumulative_spent from transactions.",
+        task: "Calculate the running cumulative transaction sum over time. Select the transaction ID, amount, and the running sum aliased as 'cumulative_spent' ordered by the transaction date.",
+        sampleOutput: {
+            columns: ["id", "amount", "cumulative_spent"],
+            values: [
+                [1, 1000, 1000]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -777,7 +1033,13 @@ export const levels: Level[] = [
         id: 44,
         title: "Level 44: Peer Subquery Audits",
         story: "Let's query employees who share the same manager as Alice Smith.",
-        task: "Select name from employees where manager_id = (select manager_id from employees where name = 'Alice Smith') and name <> 'Alice Smith'.",
+        task: "Find the names of all employees who share the same manager as 'Alice Smith' (excluding 'Alice Smith' themselves).",
+        sampleOutput: {
+            columns: ["name"],
+            values: [
+                ["Bob Jones"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -795,7 +1057,13 @@ export const levels: Level[] = [
         id: 45,
         title: "Level 45: Route Verification",
         story: "Let's trace offshore accounts connected to transfers routed through the Bahamas.",
-        task: "Select account_number from offshore_accounts join transfer_logs on offshore_accounts.id = transfer_logs.offshore_account_id where routed_through_country = 'Bahamas'.",
+        task: "Find the offshore account numbers that received transfers routed through the country 'Bahamas'.",
+        sampleOutput: {
+            columns: ["account_number"],
+            values: [
+                ["KY-8829-X"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -813,7 +1081,13 @@ export const levels: Level[] = [
         id: 46,
         title: "Level 46: High-Budget Department HAVING",
         story: "Let's find departments whose budgets exceed the average budget of all departments.",
-        task: "Select name from departments group by name having budget > (select avg(budget) from departments).",
+        task: "Identify the departments whose budget is strictly greater than the average budget of all departments.",
+        sampleOutput: {
+            columns: ["name"],
+            values: [
+                ["Executive"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -831,7 +1105,11 @@ export const levels: Level[] = [
         id: 47,
         title: "Level 47: Ledger Audit Flagging",
         story: "Sherlock wants to label the suspicious consulting transaction in the ledger.",
-        task: "Write an UPDATE query to set the description to 'FLAGGED - SUSPICIOUS TRANSACTION' in the 'transactions' table for the record with amount = 45000.",
+        task: "Flag the highly suspicious transaction of 45,000 on the ledger by updating its description to 'FLAGGED - SUSPICIOUS TRANSACTION' in the 'transactions' table.",
+        sampleOutput: {
+            columns: [],
+            values: []
+        },
         validator: (_results, query) => {
             const lowerQuery = query.toLowerCase();
             if (lowerQuery.includes('update transactions') && lowerQuery.includes('flagged - suspicious transaction') && lowerQuery.includes('45000')) {
@@ -844,7 +1122,11 @@ export const levels: Level[] = [
         id: 48,
         title: "Level 48: Log Blacklist Node",
         story: "Our firewall sweeps have detected an unauthorized network address. Let's record it.",
-        task: "Write an INSERT query to add the IP '192.168.1.99', risk_level 'High', reason 'Data Exfiltration Signature', and detected_at '2023-10-12 14:00:00' to the 'blacklisted_ips' table.",
+        task: "Log a newly detected intruder threat by inserting the IP '192.168.1.99', risk level 'High', reason 'Data Exfiltration Signature', and detection time '2023-10-12 14:00:00' into the 'blacklisted_ips' table.",
+        sampleOutput: {
+            columns: [],
+            values: []
+        },
         validator: (_results, query) => {
             const lowerQuery = query.toLowerCase();
             if (lowerQuery.includes('insert into blacklisted_ips') && lowerQuery.includes('192.168.1.99') && lowerQuery.includes('high') && lowerQuery.includes('exfiltration')) {
@@ -857,7 +1139,13 @@ export const levels: Level[] = [
         id: 49,
         title: "Level 49: Correlation Forensic Logs",
         story: "Let's find the names of employees associated with failed logins originating from blacklisted IPs.",
-        task: "JOIN 'employees', 'access_logs', and 'blacklisted_ips' to select the DISTINCT name of employees who have failed logins from blacklisted IPs.",
+        task: "Identify the unique names of employees who have logged in with a status of 'Failed' from an IP address recorded in the blacklist.",
+        sampleOutput: {
+            columns: ["name"],
+            values: [
+                ["Eve Davis"]
+            ]
+        },
         validator: (results, query) => {
             if (results.length === 0) return { success: false, message: "No results returned." };
             const res = results[0];
@@ -875,7 +1163,11 @@ export const levels: Level[] = [
         id: 50,
         title: "Level 50: Security Purge",
         story: "The case is solved! As a final safety sweep, let's delete transfer logs connected to the suspended Panama accounts.",
-        task: "Write a DELETE query to purge all entries from 'transfer_logs' where offshore_account_id = (select id from offshore_accounts where bank_name = 'Panama Secure Holdings').",
+        task: "Perform a final sweep by purging all transfer logs associated with the bank 'Panama Secure Holdings'.",
+        sampleOutput: {
+            columns: [],
+            values: []
+        },
         validator: (_results, query) => {
             const lowerQuery = query.toLowerCase();
             if (lowerQuery.includes('delete') && lowerQuery.includes('transfer_logs') && lowerQuery.includes('select') && lowerQuery.includes('panama')) {

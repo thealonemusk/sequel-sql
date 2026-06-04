@@ -19,8 +19,8 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
     isLastLevel
 }) => {
     return (
-        <div className="panel results-container" style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem', flexShrink: 0 }}>
+        <div className="panel results-container" style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.75rem', flexShrink: 0 }}>
                 <div style={{ 
                     background: 'var(--primary-light)', 
                     padding: '0.5rem', 
@@ -36,16 +36,24 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
             </div>
 
             {error && (
-                <div className="alert error">
-                    <AlertCircle size={18} style={{ flexShrink: 0, marginTop: '2px', strokeWidth: 2.5 }} />
+                <div className="alert error" style={{ padding: '0.65rem 0.85rem', fontSize: '0.85rem', marginBottom: '0.75rem', flexShrink: 0 }}>
+                    <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '1px', strokeWidth: 2.5 }} />
                     <span>{error}</span>
                 </div>
             )}
 
             {successMessage && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.25rem' }}>
-                    <div className="alert success" style={{ marginBottom: 0 }}>
-                        <CheckCircle2 size={18} style={{ flexShrink: 0, marginTop: '2px', strokeWidth: 2.5 }} />
+                <div style={{ 
+                    display: 'flex', 
+                    flexDirection: 'row', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between', 
+                    gap: '0.75rem', 
+                    marginBottom: '0.75rem',
+                    flexShrink: 0 
+                }}>
+                    <div className="alert success" style={{ margin: 0, flex: 1, padding: '0.65rem 0.85rem', fontSize: '0.85rem' }}>
+                        <CheckCircle2 size={16} style={{ flexShrink: 0, marginTop: '1px', strokeWidth: 2.5 }} />
                         <span>{successMessage}</span>
                     </div>
                     {isLastLevel ? (
@@ -53,7 +61,9 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
                             className="btn" 
                             onClick={onReset} 
                             style={{ 
-                                alignSelf: 'flex-start', 
+                                flexShrink: 0,
+                                padding: '0.55rem 1.15rem',
+                                fontSize: '0.825rem',
                                 background: 'var(--primary-color)', 
                                 boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' 
                             }}
@@ -65,12 +75,14 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
                             className="btn" 
                             onClick={onNext} 
                             style={{ 
-                                alignSelf: 'flex-start', 
+                                flexShrink: 0,
+                                padding: '0.55rem 1.15rem',
+                                fontSize: '0.825rem',
                                 background: 'var(--primary-color)', 
                                 boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' 
                             }}
                         >
-                            Continue to Next Level &rarr;
+                            Continue &rarr;
                         </button>
                     )}
                 </div>
