@@ -1,20 +1,7 @@
-export interface QueryResult {
-    columns: string[];
-    values: any[][];
-}
-
-export interface Level {
-    id: number;
-    title: string;
-    story: string;
-    task: string;
-    answer: string; // sample correct SQL answer shown on hint
-    validator: (results: QueryResult[], query: string) => { success: boolean; message: string };
-    sampleOutput?: {
-        columns: string[];
-        values: any[][];
-    };
-}
+// Re-export types so consumers can import from a single path if needed,
+// but the canonical definitions live in src/types/index.ts.
+export type { QueryResult, Level } from '../types';
+import type { Level } from '../types';
 
 export const levels: Level[] = [
     {
