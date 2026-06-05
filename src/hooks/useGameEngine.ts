@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { gameEngine } from '../db/GameEngine';
 import type { QueryResult, SchemaRow } from '../types';
 
 // ---------------------------------------------------------------------------
 // useGameEngine
 // Manages database initialisation, query execution, and schema state.
+// initDatabase() is exposed so the caller can decide when to start loading
+// (i.e. after the user dismisses the landing page).
 // ---------------------------------------------------------------------------
 
 interface GameEngineState {
@@ -16,7 +18,12 @@ interface GameEngineState {
 }
 
 interface GameEngineActions {
-  runQuery: (query: string, validator: (r: QueryResult[], q: string) => { success: boolean; message: string }) => void;
+  /** Trigger WASM load + seed. Safe to call multiple times (no-op if already ready). */
+  initDatabase: () => void;
+  runQuery: (
+    query: string,
+    validator: (r: QueryResult[], q: string) => { success: boolean; message: string },
+  ) => void;
   resetDatabase: () => void;
   clearFeedback: () => void;
 }
@@ -28,18 +35,23 @@ export function useGameEngine(): GameEngineState & GameEngineActions {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Initialise on mount
-  useEffect(() => {
-    gameEngine.init().then(() => {
-      setIsReady(true);
-      setSchema(gameEngine.getSchema());
-    });
-  }, []);
-
   const clearFeedback = useCallback(() => {
     setError(null);
     setSuccessMessage(null);
     setResults([]);
+  }, []);
+
+  // Called once when the user chooses to start the game
+  const initDatabase = useCallback(() => {
+    if (gameEngine.isReady) {
+      setIsReady(true);
+      setSchema(gameEngine.getSchema());
+      return;
+    }
+    gameEngine.init().then(() => {
+      setIsReady(true);
+      setSchema(gameEngine.getSchema());
+    });
   }, []);
 
   const runQuery = useCallback(
@@ -82,6 +94,7 @@ export function useGameEngine(): GameEngineState & GameEngineActions {
     results,
     error,
     successMessage,
+    initDatabase,
     runQuery,
     resetDatabase,
     clearFeedback,

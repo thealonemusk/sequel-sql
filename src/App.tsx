@@ -5,6 +5,7 @@ import { levels } from './db/levels';
 import { useGameEngine } from './hooks/useGameEngine';
 import { useResizablePanels } from './hooks/useResizablePanels';
 
+import { LandingPage } from './components/LandingPage';
 import { LoadingScreen } from './components/LoadingScreen';
 import { SchemaModal } from './components/SchemaModal';
 import { StoryPanel } from './components/StoryPanel';
@@ -12,10 +13,15 @@ import { SqlEditor } from './components/SqlEditor';
 import { ResultsTable } from './components/ResultsTable';
 
 // ---------------------------------------------------------------------------
-// App
+// App — two views: 'landing' → 'game'
+// The DB starts initialising only when the user clicks "Begin Investigation",
+// so the landing page loads instantly with no spinner.
 // ---------------------------------------------------------------------------
 
+type View = 'landing' | 'game';
+
 function App() {
+  const [view, setView] = useState<View>('landing');
   const [currentLevelId, setCurrentLevelId] = useState(1);
   const [isSchemaOpen, setIsSchemaOpen] = useState(false);
 
@@ -28,6 +34,7 @@ function App() {
     runQuery,
     resetDatabase,
     clearFeedback,
+    initDatabase,
   } = useGameEngine();
 
   const {
@@ -42,6 +49,13 @@ function App() {
 
   const currentLevel = levels.find((l) => l.id === currentLevelId);
 
+  // ── Landing → Game transition ──────────────────────────────────────────
+  const handleStart = useCallback(() => {
+    setView('game');
+    initDatabase();        // begin WASM load now that the user asked for it
+  }, [initDatabase]);
+
+  // ── In-game actions ────────────────────────────────────────────────────
   const handleRunQuery = useCallback(
     (query: string) => {
       if (!currentLevel) return;
@@ -64,14 +78,14 @@ function App() {
 
   const progressPct = Math.floor((currentLevelId / levels.length) * 100);
 
-  // ---- Loading state ---------------------------------------------------------
-  if (!isReady) return <LoadingScreen />;
-  if (!currentLevel) return null;
+  // ── Render ──────────────────────────────────────────────────────────────
+  if (view === 'landing') return <LandingPage onStart={handleStart} />;
+  if (!isReady)           return <LoadingScreen />;
+  if (!currentLevel)      return null;
 
-  // ---- Main layout -----------------------------------------------------------
   return (
     <div className="app-root">
-      {/* ── Header ────────────────────────────────────────────────────────── */}
+      {/* ── Header ──────────────────────────────────────────────────────── */}
       <header className="app-header">
         <div className="header-brand">
           <div className="header-icon">
@@ -105,14 +119,12 @@ function App() {
         </div>
       </header>
 
-      {/* ── Split layout ──────────────────────────────────────────────────── */}
+      {/* ── Split layout ────────────────────────────────────────────────── */}
       <div className="layout-grid">
-        {/* Left: story panel */}
         <aside className="sidebar" style={{ width: `${sidebarWidthPct}%` }}>
           <StoryPanel level={currentLevel} />
         </aside>
 
-        {/* Horizontal drag handle */}
         <div
           className={`resizer-h${isResizingH ? ' active' : ''}`}
           onMouseDown={startResizingH}
@@ -123,13 +135,11 @@ function App() {
           <div className="resizer-knob-h" />
         </div>
 
-        {/* Right: editor + results */}
         <main className="main-content" style={{ width: `${100 - sidebarWidthPct}%` }}>
           <div ref={editorContainerRef}>
             <SqlEditor onRun={handleRunQuery} height={editorHeightPx} />
           </div>
 
-          {/* Vertical drag handle */}
           <div
             className={`resizer-v${isResizingV ? ' active' : ''}`}
             onMouseDown={startResizingV}
@@ -153,7 +163,7 @@ function App() {
         </main>
       </div>
 
-      {/* ── Schema FAB ────────────────────────────────────────────────────── */}
+      {/* ── Schema FAB ──────────────────────────────────────────────────── */}
       <button
         className="btn btn--schema-fab"
         onClick={() => setIsSchemaOpen(true)}
@@ -163,7 +173,6 @@ function App() {
         Database Schema
       </button>
 
-      {/* ── Schema modal ──────────────────────────────────────────────────── */}
       {isSchemaOpen && (
         <SchemaModal schema={schema} onClose={() => setIsSchemaOpen(false)} />
       )}
