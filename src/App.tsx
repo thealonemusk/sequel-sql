@@ -311,9 +311,11 @@ function App() {
                 </div>
 
                 <ResultsTable 
+                    key={currentLevelId}
                     results={results} 
                     error={error} 
-                    successMessage={successMsg} 
+                    successMessage={successMsg}
+                    answer={currentLevel.answer}
                     onNext={handleNextLevel}
                     onReset={handleResetGame}
                     isLastLevel={currentLevelId === levels.length}
